@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel Principal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #dcecf9, #f5fafd);
+      color: #34495e;
+    }
+
+    .sidebar {
+      position: fixed;
+      width: 240px;
+      height: 100vh;
+      background-color: #34495e;
+      padding: 30px 0;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sidebar img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .welcome-box {
+      background-color: #1abc9c;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .welcome-box p {
+      margin: 0;
+      font-size: 14px;
+      color: white;
+    }
+
+    .sidebar a {
+      display: block;
+      width: 100%;
+      padding: 15px 25px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      transition: background 0.3s, padding-left 0.3s;
+    }
+
+    .sidebar a:hover, .sidebar a.active {
+      background-color: #1abc9c;
+      padding-left: 35px;
+    }
+
+    .main {
+      margin-left: 260px;
+      padding: 40px;
+    }
+
+    .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      flex: 1 1 250px;
+      background-color: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .card img {
+      width: 60px;
+      height: 60px;
+      margin-bottom: 15px;
+    }
+
+    .card h3 {
+      font-size: 22px;
+      color: #2980b9;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .card:hover {
+      transform: translateY(-7px);
+    }
+
+    h1 {
+      font-size: 36px;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <img src="/img/perfil.png" alt="Perfil">
+
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h2 style="font-size: 20px; color: #ffffff; margin-bottom: 10px;">
+        Bienvenido<br>
+        <span style="color: #1abc9c; font-weight: bold;"><%= usuario.rol %></span>
+        <span style="font-weight: bold;"> <%= usuario.nombre %></span>
+      </h2>
+    </div>
+
+    <a href="/admin"><i class="fas fa-tools"></i> Administrador</a>
+    <a href="/clientes"><i class="fas fa-user-friends"></i> Clientes</a>
+    <a href="/simple"><i class="fas fa-cash-register"></i> Vender</a>
+    
+    <a href="/perfil"><i class="fas fa-user-circle"></i> Perfil</a>
+    <a href="/salir"><i class="fas fa-sign-out-alt"></i> Salir</a>
+  </div>
+
+  <div class="main">
+    <h1>Panel de Control</h1>
+
+    <div class="card-container">
+      <div class="card">
+        <img src="/img/productos.png" alt="Productos">
+        <h3>Total productos</h3>
+        <p><%= totalProductos %></p>
+      </div>
+      <div class="card">
+        <img src="/img/ventas.png" alt="Ventas">
+        <h3>Ventas registradas</h3>
+        <p><%= totalVentas %></p>
+      </div>
+      <div class="card">
+        <img src="/img/usuarios.png" alt="Usuarios">
+        <h3>Usuarios registrados</h3>
+        <p><%= totalUsuarios %></p>
+      </div>
+      <div class="card">
+        <img src="/img/clientes.png" alt="Clientes">
+        <h3>Clientes registrados</h3>
+        <p><%= totalClientes %></p>
+      </div>
+      <div class="card">
+        <img src="/img/ventas.png" alt="Total Ventas">
+        <h3>Total ventas</h3>
+        <p>S/ <%= montoTotal %></p>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reportes de Ventas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #2c3e50;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: fixed;
+      width: 240px;
+      height: 100vh;
+      background-color: #2c3e50;
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      color: white;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 1.8rem;
+      font-size: 22px;
+      font-weight: 700;
+      align-self: center;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      width: 100%;
+    }
+
+    .sidebar ul li {
+      margin-bottom: 12px;
+    }
+
+    .sidebar ul li a {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      cursor: pointer;
+      display: block;
+      padding: 10px 14px;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar ul li a:hover,
+    .sidebar ul li a.active {
+      background-color: #1abc9c;
+      color: white;
+    }
+
+    /* Main content */
+    .main {
+      margin-left: 240px;
+      padding: 2rem 2.5rem;
+      flex-grow: 1;
+      max-width: calc(100% - 240px);
+      overflow-x: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    /* Formularios de filtros (ahora en main) */
+    .filter-form {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      max-width: 500px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    input[type='date'],
+    input[type='number'],
+    select {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    button[type='submit'] {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    button[type='submit']:hover {
+      background-color: #2980b9;
+    }
+
+    /* Reportes secciones */
+    .report-section {
+      display: none;
+    }
+
+    .report-section.active {
+      display: block;
+    }
+
+    /* Tablas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 40px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #2980b9;
+      color: white;
+      font-weight: 700;
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .sidebar {
+        display: none !important;
+      }
+
+      table {
+        box-shadow: none;
+        border: 1px solid #000;
+      }
+
+      th {
+        background-color: #ccc !important;
+        color: black !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Filtros</h2>
+    <ul>
+      <li><a href="#" class="option-link" data-target="historial-section"><i class="fas fa-history"></i> Historial Total de Ventas</a></li>
+      <li><a href="#" class="option-link" data-target="dia-section"><i class="fas fa-calendar-day"></i> Buscar por Día</a></li>
+      <li><a href="#" class="option-link" data-target="semana-section"><i class="fas fa-calendar-week"></i> Buscar por Semana</a></li>
+      <li><a href="#" class="option-link" data-target="mes-section"><i class="fas fa-calendar-alt"></i> Buscar por Mes</a></li>
+      <li><a href="#" class="option-link" data-target="usuario-section"><i class="fas fa-user-tag"></i> Ventas por Usuario</a></li>
+      <li><a href="#" class="option-link" data-target="producto-section"><i class="fas fa-box-open"></i> Producto Más Vendido</a></li>
+      <li><a href="#" class="option-link" data-target="ultimos7-section"><i class="fas fa-calendar-check"></i> Ventas Últimos 7 Días</a></li>
+
+    </ul>
+  </div>
+
+  <div class="main">
+    <h1>Reportes de Ventas</h1>
+    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+    <a href="/admin">
+        <button style="background-color: #2ecc71; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        🏠 Volver al Menú de ADministrador
+        </button>
+    </a>
+
+    <button onclick="imprimirReporte()" style="background-color: #e67e22; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+        📄 Descargar PDF
+    </button>
+    </div>
+
+    <!-- Formularios de filtros -->
+    <form id="dia-section" class="filter-form" method="get" style="display:none;">
+      <label>Buscar por Día:</label>
+      <input type="date" name="fecha_dia" value="<%= fecha_dia || '' %>" required />
+      <button type="submit">Buscar</button>
+    </form>
+
+    <form id="semana-section" class="filter-form" method="get" style="display:none;">
+      <label>Mes:</label>
+      <select name="mes" id="mes" onchange="actualizarSemanas()" required>
+        <option value="">Seleccione un mes</option>
+        <option value="1">Enero</option>
+        <option value="2">Febrero</option>
+        <option value="3">Marzo</option>
+        <option value="4">Abril</option>
+        <option value="5">Mayo</option>
+        <option value="6">Junio</option>
+        <option value="7">Julio</option>
+        <option value="8">Agosto</option>
+        <option value="9">Septiembre</option>
+        <option value="10">Octubre</option>
+        <option value="11">Noviembre</option>
+        <option value="12">Diciembre</option>
+      </select>
+
+      <label>Semana:</label>
+      <select name="semana" id="semana" required>
+        <option value="">Seleccione primero un mes</option>
+      </select>
+
+      <label>Año:</label>
+      <input type="number" name="anio_semana" min="2000" max="2100" required />
+
+      <button type="submit">Buscar</button>
+    </form>
+
+    <form id="mes-section" class="filter-form" method="get" style="display:none;">
+      <label>Mes:</label>
+      <select name="mes" required>
+        <option value="">Seleccione un mes</option>
+        <option value="1">Enero</option>
+        <option value="2">Febrero</option>
+        <option value="3">Marzo</option>
+        <option value="4">Abril</option>
+        <option value="5">Mayo</option>
+        <option value="6">Junio</option>
+        <option value="7">Julio</option>
+        <option value="8">Agosto</option>
+        <option value="9">Septiembre</option>
+        <option value="10">Octubre</option>
+        <option value="11">Noviembre</option>
+        <option value="12">Diciembre</option>
+      </select>
+
+      <label>Año:</label>
+      <input type="number" name="anio_mes" min="2000" max="2100" value="<%= anio_mes || '' %>" />
+
+      <button type="submit">Buscar</button>
+    </form>
+
+    <!-- Reportes -->
+
+    <!-- Historial total -->
+    <section id="historial-section" class="report-section">
+      <% if (historialVentas && historialVentas.length > 0) { %>
+        <h2>Historial Total de Ventas</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID Venta</th>
+              <th>Fecha</th>
+              <th>Vendedor</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% historialVentas.forEach(v => { %>
+              <tr>
+                <td><%= v.id_venta %></td>
+                <td><%= new Date(v.fecha).toLocaleString() %></td>
+                <td><%= v.vendedor %></td>
+                <td><%= v.cliente %></td>
+                <td><%= v.producto %></td>
+                <td><%= v.cantidad %></td>
+                <td><%= parseFloat(v.precio).toFixed(2) %></td>
+                <td><%= parseFloat(v.subtotal).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No hay datos para el historial total.</p>
+      <% } %>
+    </section>
+
+    <!-- Buscar por día -->
+    <section id="dia-section-main" class="report-section">
+      <% if (ventasDelDia && ventasDelDia.length > 0) { %>
+        <h2>Ventas del Día <%= fecha_dia %></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID Venta</th>
+              <th>Fecha</th>
+              <th>Vendedor</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ventasDelDia.forEach(v => { %>
+              <tr>
+                <td><%= v.id_venta %></td>
+                <td><%= new Date(v.fecha).toLocaleString() %></td>
+                <td><%= v.vendedor %></td>
+                <td><%= v.cliente %></td>
+                <td><%= v.producto %></td>
+                <td><%= v.cantidad %></td>
+                <td><%= parseFloat(v.precio).toFixed(2) %></td>
+                <td><%= parseFloat(v.subtotal).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No hay ventas para ese día.</p>
+      <% } %>
+    </section>
+
+    <!-- Buscar por semana -->
+    <section id="semana-section-main" class="report-section">
+      <% if (ventasDeLaSemana && ventasDeLaSemana.length > 0) { %>
+        <h2>Ventas de la Semana <%= semana %> de <%= anio_semana %> - Mes <%= mes %></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID Venta</th>
+              <th>Fecha</th>
+              <th>Vendedor</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ventasDeLaSemana.forEach(v => { %>
+              <tr>
+                <td><%= v.id_venta %></td>
+                <td><%= new Date(v.fecha).toLocaleString() %></td>
+                <td><%= v.vendedor %></td>
+                <td><%= v.cliente %></td>
+                <td><%= v.producto %></td>
+                <td><%= v.cantidad %></td>
+                <td><%= parseFloat(v.precio).toFixed(2) %></td>
+                <td><%= parseFloat(v.subtotal).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No hay ventas para esa semana.</p>
+      <% } %>
+    </section>
+
+    <!-- Buscar por mes -->
+    <section id="mes-section-main" class="report-section">
+      <% if (ventasDelMes && ventasDelMes.length > 0) { %>
+        <h2>Ventas del Mes <%= mes %> - <%= anio_mes %></h2>
+        <table>
+          <thead>
+            <tr>
+              <th>ID Venta</th>
+              <th>Fecha</th>
+              <th>Vendedor</th>
+              <th>Cliente</th>
+              <th>Producto</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ventasDelMes.forEach(v => { %>
+              <tr>
+                <td><%= v.id_venta %></td>
+                <td><%= new Date(v.fecha).toLocaleString() %></td>
+                <td><%= v.vendedor %></td>
+                <td><%= v.cliente %></td>
+                <td><%= v.producto %></td>
+                <td><%= v.cantidad %></td>
+                <td><%= parseFloat(v.precio).toFixed(2) %></td>
+                <td><%= parseFloat(v.subtotal).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No hay ventas para ese mes.</p>
+      <% } %>
+    </section>
+
+    <!-- Ventas por usuario -->
+    <section id="usuario-section" class="report-section">
+      <% if (ventasPorUsuario && ventasPorUsuario.length > 0) { %>
+        <h2>Ventas por Usuario</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Total Ventas</th>
+              <th>Total Monto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ventasPorUsuario.forEach(u => { %>
+              <tr>
+                <td><%= u.usuario %></td>
+                <td><%= u.total_ventas %></td>
+                <td><%= parseFloat(u.total_monto).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No hay datos de ventas por usuario.</p>
+      <% } %>
+    </section>
+
+    <!-- Producto más vendido -->
+    <section id="producto-section" class="report-section">
+      <% if (productosMasVendidos && productosMasVendidos.length > 0) { %>
+        <h2>Producto Más Vendido</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Cantidad Total</th>
+              <th>Total Recaudado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% productosMasVendidos.forEach(p => { %>
+              <tr>
+                <td><%= p.producto %></td>
+                <td><%= p.cantidad_total %></td>
+                <td><%= parseFloat(p.total_recaudado).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No hay datos de productos más vendidos.</p>
+      <% } %>
+    </section>
+
+    <!-- Ventas últimos 7 días -->
+    <section id="ultimos7-section" class="report-section">
+      <% if (ventasPorDia && ventasPorDia.length > 0) { %>
+        <h2>Ventas Últimos 7 Días</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Total Recaudado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% ventasPorDia.forEach(d => { %>
+              <tr>
+                <td><%= new Date(d.dia).toLocaleDateString() %></td>
+                <td><%= parseFloat(d.total).toFixed(2) %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p>No hay datos de ventas en los últimos 7 días.</p>
+      <% } %>
+    </section>
+  </div>
+
+  <script>
+  const optionLinks = document.querySelectorAll('.option-link');
+  const filterForms = document.querySelectorAll('.filter-form');
+  const reportSections = document.querySelectorAll('.report-section');
+
+  optionLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      const target = link.getAttribute('data-target');
+      localStorage.setItem('selectedOption', target); // Guardar selección
+
+      activateSection(target);
+    });
+  });
+
+  // Mostrar última opción seleccionada al cargar la página
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTarget = localStorage.getItem('selectedOption');
+    if (savedTarget) {
+      activateSection(savedTarget);
+    }
+  });
+
+  function activateSection(target) {
+    // Quitar active de todos los links
+    optionLinks.forEach(l => l.classList.remove('active'));
+    // Ocultar formularios y reportes
+    filterForms.forEach(f => f.style.display = 'none');
+    reportSections.forEach(r => r.classList.remove('active'));
+
+    // Activar link
+    const link = document.querySelector(`[data-target="${target}"]`);
+    if (link) link.classList.add('active');
+
+    // Mostrar formulario si existe
+    const form = document.getElementById(target);
+    if (form && form.classList.contains('filter-form')) {
+      form.style.display = 'block';
+    }
+
+    // Mostrar reporte
+    const report = document.getElementById(target + '-main') || document.getElementById(target);
+    if (report) {
+      report.classList.add('active');
+    }
+  }
+
+  // Función para actualizar semanas
+  function actualizarSemanas() {
+    const mes = parseInt(document.getElementById('mes').value);
+    const semanaSelect = document.getElementById('semana');
+    semanaSelect.innerHTML = '';
+
+    if (!mes) {
+      semanaSelect.innerHTML = '<option value="">Seleccione primero un mes</option>';
+      return;
+    }
+
+    const semanasPorMes = { 2: 4, 4: 4, 6: 4, 9: 4, 11: 4 };
+    const totalSemanas = semanasPorMes[mes] || 5;
+
+    for (let i = 1; i <= totalSemanas; i++) {
+      const option = document.createElement('option');
+      option.value = i;
+      option.text = `Semana ${i}`;
+      semanaSelect.appendChild(option);
+    }
+  }
+  function imprimirReporte() {
+    // Encontrar la sección de reporte visible
+    const reporteVisible = document.querySelector('.report-section.active');
+    if (!reporteVisible) {
+      alert('No hay reporte visible para imprimir.');
+      return;
+    }
+
+    const ventana = window.open('', '_blank');
+    ventana.document.write(`
+      <html>
+      <head>
+        <title>Reporte</title>
+        <style>
+          body { font-family: Roboto, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+          th { background-color: #ccc; }
+          h2 { margin-bottom: 20px; }
+        </style>
+      </head>
+      <body>
+        ${reporteVisible.innerHTML}
+      </body>
+      </html>
+    `);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+    ventana.close();
+  }
+</script>
+
+</body>
+</html>

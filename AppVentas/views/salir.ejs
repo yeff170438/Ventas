@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sesión Cerrada</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #dcecf9, #f5fafd);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #34495e;
+    }
+
+    .mensaje {
+      background-color: white;
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .mensaje h1 {
+      margin-bottom: 20px;
+      font-size: 28px;
+      color: #2980b9;
+      font-weight: 700;
+    }
+
+    .mensaje p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    .mensaje a {
+      display: inline-block;
+      text-decoration: none;
+      color: white;
+      background-color: #1abc9c;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .mensaje a:hover {
+      background-color: #16a085;
+    }
+  </style>
+</head>
+<body>
+  <div class="mensaje">
+    <h1>Has cerrado sesión con éxito</h1>
+    <p>Esperamos verte pronto.</p>
+    <a href="/">Volver al inicio</a>
+  </div>
+</body>
+</html>

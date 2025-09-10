@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registrar Venta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style>
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      color: #2c3e50;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      padding: 15px 30px;
+      background-color: #2c3e50;
+    }
+
+    .top-bar a {
+      margin-left: 15px;
+      text-decoration: none;
+      background-color: #1abc9c;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      transition: background 0.3s;
+      font-weight: 500;
+    }
+
+    .top-bar a:hover {
+      background-color: #16a085;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    .left-panel, .right-panel {
+      flex: 1;
+      background-color: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    h2, h3 {
+      margin-top: 0;
+      color: #34495e;
+    }
+
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table thead {
+      background-color: #1abc9c;
+      color: white;
+    }
+
+    table th, table td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    table tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .tipo-select, #busqueda-producto {
+      margin-bottom: 12px;
+    }
+
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      overflow-y: auto;
+      max-height: 400px; /* Ajusta la altura según lo que quieras mostrar */
+      padding-right: 5px;
+    }
+
+    .product-card {
+      flex: 1 1 calc(33.333% - 12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.3s;
+      min-width: 120px;
+      max-width: 200px;
+      box-sizing: border-box;
+      background-color: #fafafa;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      background-color: #f0f8ff;
+    }
+
+    button[type="submit"], button[type="button"] {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    button[type="submit"]:hover, button[type="button"]:hover {
+      background-color: #16a085;
+    }
+
+    .totales p {
+      margin: 5px 0;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+
+
+
+<body>
+  <div class="top-bar"> 
+    <div id="mensaje" style="
+  display: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #1abc9c;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  z-index: 9999;
+  font-weight: bold;
+"></div>
+    
+    <a href="/menu">Ir al Menú</a>
+  </div>
+
+
+  <div id="mensaje-exito" style="
+    display:none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #27ae60;
+    color: white;
+    padding: 16px 32px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    font-size: 1.2rem;
+    font-weight: bold;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  ">
+    ✅ Venta realizada con éxito
+  </div>
+
+
+
+  <div class="container">
+    <div class="left-panel">
+      <h2>Venta</h2>
+      <form id="ventaForm">
+        <label for="cliente">Cliente:</label>
+        <select id="cliente" name="cliente" required>
+          <option value="">Seleccione cliente</option>
+          <% clientes.forEach(cliente => { %>
+            <option value="<%= cliente.id_cliente %>"><%= cliente.nombre %></option>
+          <% }) %>
+        </select>
+        <button type="button" onclick="window.location.href='/Clientes'">Nuevo Cliente</button>
+
+        <table id="tabla-productos">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Stock</th>
+              <th>Cantidad</th>
+              <th>Precio</th>
+              <th>Descuento</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div class="totales">
+          <p>Subtotal: S/ <span id="subtotal">0.00</span></p>
+          <p><strong>Total: S/ <span id="total">0.00</span></strong></p>
+        </div>
+
+        <button type="submit">Registrar Venta</button>
+      </form>
+    </div>
+
+    <div class="right-panel">
+      <h3>Productos</h3>
+
+      <label for="tipo-select">Filtrar por tipo:</label>
+      <select id="tipo-select" class="tipo-select">
+        <option value="todos">Todos</option>
+        <% [...new Set(productos.map(p => p.tipo_producto))].forEach(tipo => { %>
+          <option value="<%= tipo %>"><%= tipo %></option>
+        <% }) %>
+      </select>
+
+      <input type="text" id="busqueda-producto" placeholder="Buscar producto por nombre...">
+
+      <div class="product-grid" id="lista-productos">
+       
+        <% productos.forEach(producto => { %>
+          <div class="product-card" data-id="<%= producto.id_producto %>" data-nombre="<%= producto.nombre %>" data-precio="<%= producto.precio %>" data-tipo="<%= producto.tipo_producto %>" data-stock="<%= producto.existencia %>">
+            <strong><%= producto.nombre %></strong>
+            <span>S/ <%= Number(producto.precio).toFixed(2) %></span>
+            <span>Stock: <%= producto.existencia %></span>
+          </div>
+        <% }) %>
+
+      </div>
+    </div>
+  </div>
+
+<script>
+    let tipoSeleccionado = 'todos';
+
+    document.getElementById('tipo-select').addEventListener('change', function () {
+      tipoSeleccionado = this.value;
+      filtrarProductos();
+    });
+
+    document.getElementById('busqueda-producto').addEventListener('input', filtrarProductos);
+
+    function filtrarProductos() {
+      const termino = document.getElementById('busqueda-producto').value.toLowerCase();
+      document.querySelectorAll('.product-card').forEach(card => {
+        const nombre = card.dataset.nombre.toLowerCase();
+        const tipo = card.dataset.tipo;
+        card.style.display = (nombre.includes(termino) && (tipoSeleccionado === 'todos' || tipo === tipoSeleccionado)) ? 'flex' : 'none';
+      });
+    }
+
+    const tablaBody = document.querySelector('#tabla-productos tbody');
+
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.id;
+        const nombre = card.dataset.nombre;
+        const precio = parseFloat(card.dataset.precio);
+        const stock = card.dataset.stock;
+
+        const existente = [...tablaBody.querySelectorAll('input[data-id]')].find(input => input.dataset.id === id);
+
+        if (existente) {
+          existente.value = parseInt(existente.value) + 1;
+          actualizarTotales();
+          return;
+        }
+
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${nombre}</td>
+          <td>${stock}</td>
+          <td><input type="number" min="1" value="1" class="cantidad" data-precio="${precio}" data-id="${id}"></td>
+          <td>${precio.toFixed(2)}</td>
+          <td><input type="number" min="0" value="0" class="descuento"></td>
+          <td class="subtotal">${precio.toFixed(2)}</td>
+          <td><button type="button" onclick="this.closest('tr').remove(); actualizarTotales();">X</button></td>
+        `;
+        tablaBody.appendChild(fila);
+        actualizarTotales();
+      });
+    });
+
+    document.getElementById('ventaForm').addEventListener('input', actualizarTotales);
+
+    function actualizarTotales() {
+      let subtotal = 0;
+      document.querySelectorAll('.cantidad').forEach(input => {
+        const cantidad = parseInt(input.value);
+        const precio = parseFloat(input.dataset.precio);
+        const descuento = parseFloat(input.closest('tr').querySelector('.descuento').value) || 0;
+        const sub = (cantidad * precio) - descuento;
+        input.closest('tr').querySelector('.subtotal').textContent = sub.toFixed(2);
+        subtotal += sub;
+      });
+      document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+      document.getElementById('total').textContent = subtotal.toFixed(2);
+    }
+
+  document.getElementById('ventaForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const cliente = document.getElementById('cliente').value;
+    if (!cliente) return alert('Seleccione un cliente');
+
+    const productos = [...document.querySelectorAll('.cantidad')].map(input => ({
+      id_producto: input.dataset.id,
+      cantidad: parseInt(input.value),
+      precio: parseFloat(input.dataset.precio),
+      descuento: parseFloat(input.closest('tr').querySelector('.descuento').value) || 0
+    }));
+
+    if (!productos.length) return alert('Seleccione al menos un producto');
+
+    fetch('/simple/venta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cliente, productos })
+    })
+    .then(res => {
+      if (res.ok) {
+        return res.json();  // Recibe el id_venta del servidor
+      } else {
+        return res.text().then(text => { throw new Error(text); });
+      }
+    })
+    .then(data => {
+      mostrarMensajeExito();
+      window.open(`/simple/boleta/${data.id_venta}`, '_blank'); // Abre boleta en nueva ventana
+      setTimeout(() => location.reload(), 2000);
+    })
+    .catch(err => alert('Error: ' + err.message));
+  });
+
+    function mostrarMensajeExito() {
+  const mensaje = document.getElementById('mensaje-exito');
+  mensaje.style.display = 'block';
+  setTimeout(() => mensaje.style.opacity = '1', 10); // Mostrar con animación
+
+  setTimeout(() => {
+    mensaje.style.opacity = '0'; // Desvanecer
+  }, 1500);
+
+  setTimeout(() => {
+    mensaje.style.display = 'none';
+  }, 2500);
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Tambo del Barrio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .login-container {
+      background-color: #ffffff;
+      padding: 40px 35px;
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
+    }
+
+    .login-container h1 {
+      margin-bottom: 25px;
+      font-size: 26px;
+      color: #333;
+      font-weight: 700;
+    }
+
+    .login-container label {
+      display: block;
+      margin: 15px 0 5px;
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border-color 0.3s;
+    }
+
+    .login-container input:focus {
+      border-color: #43cea2;
+      outline: none;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to right, #43cea2, #185a9d);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.3s;
+      margin-top: 10px;
+    }
+
+    .login-container button:hover {
+      opacity: 0.9;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 12px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <img src="/img/tambo.png" alt="Logo Tambo" class="logo">
+
+    <h1>Iniciar Sesión</h1>
+
+    <% if (error) { %>
+      <div class="error-message"><%= error %></div>
+    <% } %>
+
+    <form action="/" method="POST">
+      <label for="usuario">Usuario</label>
+      <input type="text" id="usuario" name="usuario" placeholder="Ingrese su usuario" required>
+
+      <label for="contrasena">Contraseña</label>
+      <input type="password" id="contrasena" name="contrasena" placeholder="Ingrese su contraseña" required>
+
+      <button type="submit">Entrar</button>
+    </form>
+
+    <div class="footer">
+      &copy; <%= new Date().getFullYear() %> Tambo del Barrio. Todos los derechos reservados.
+    </div>
+  </div>
+
+</body>
+</html>

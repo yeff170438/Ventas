@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Boleta Electrónica - Tambo del Barrio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      font-family: 'Roboto', sans-serif;
+      color: #2c3e50;
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .boleta {
+      background: white;
+      width: 100%;
+      max-width: 700px;
+      border-radius: 15px;
+      padding: 25px 35px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      font-weight: 700;
+      color: #1abc9c;
+      margin-bottom: 8px;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #34495e;
+      margin-bottom: 30px;
+      font-weight: 500;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .info-venta {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      font-weight: 500;
+    }
+
+    .info-venta div {
+      flex: 1;
+      padding: 0 10px;
+      color: #2c3e50;
+    }
+
+    .info-venta div strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #1abc9c;
+      font-weight: 700;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    thead {
+      background-color: #1abc9c;
+      color: white;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tbody tr:hover {
+      background-color: #f0f8ff;
+    }
+
+    tfoot td {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #16a085;
+      border-top: 3px solid #1abc9c;
+      text-align: right;
+      padding: 15px;
+    }
+
+    .btn-print {
+      display: block;
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      padding: 14px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      letter-spacing: 1.2px;
+    }
+
+    .btn-print:hover {
+      background-color: #16a085;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .btn-print {
+        display: none;
+      }
+      .boleta {
+        box-shadow: none;
+        border-radius: 0;
+        width: 100%;
+        max-width: none;
+        padding: 0;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="boleta">
+    <h1>Tambo del Barrio</h1>
+    <div class="subtitulo">Boleta Electrónica de Venta</div>
+
+    <div class="info-venta">
+      <div>
+        <strong>Cliente</strong>
+        <span><%= venta.cliente %></span>
+      </div>
+      <div>
+        <strong>Vendedor</strong>
+        <span><%= venta.vendedor %></span>
+      </div>
+      <div>
+        <strong>ID Venta</strong>
+        <span>#<%= venta.id_venta %></span>
+      </div>
+      <div>
+        <strong>Fecha</strong>
+        <span><%= new Date(venta.fecha).toLocaleString() %></span>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio (S/)</th>
+          <th>Subtotal (S/)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%
+          let total = 0;
+          detalles.forEach(d => {
+            total += Number(d.subtotal);
+        %>
+        <tr>
+          <td><%= d.producto %></td>
+          <td><%= d.cantidad %></td>
+          <td><%= Number(d.precio).toFixed(2) %></td>
+          <td><%= Number(d.subtotal).toFixed(2) %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">TOTAL</td>
+          <td>S/ <%= total.toFixed(2) %></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <button class="btn-print" onclick="window.print()">Imprimir Boleta</button>
+  </div>
+</body>
+</html>

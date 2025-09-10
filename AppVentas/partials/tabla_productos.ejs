@@ -1,0 +1,18 @@
+<table>
+  <thead>
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad Total</th>
+      <th>Total Recaudado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% ventas.forEach(p => { %>
+      <tr>
+        <td><%= p.producto %></td>
+        <td><%= p.cantidad_total %></td>
+        <td><%= parseFloat(p.total_recaudado).toFixed(2) %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>

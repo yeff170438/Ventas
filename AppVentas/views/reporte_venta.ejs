@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reportes de Ventas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      color: #2c3e50;
+      display: flex;
+    }
+
+    .sidebar {
+      position: fixed;
+      width: 220px;
+      height: 100vh;
+      background-color: #2c3e50;
+      padding: 20px 0;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .sidebar h2 {
+      margin-bottom: 30px;
+      font-size: 18px;
+    }
+
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 12px 20px;
+      background: none;
+      color: white;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .sidebar button:hover,
+    .sidebar button.active {
+      background-color: #1abc9c;
+    }
+
+    .main {
+      margin-left: 240px;
+      padding: 30px;
+      width: 100%;
+    }
+
+    h1, h2 {
+      margin: 20px 0;
+    }
+
+    .section {
+      display: none;
+      margin-bottom: 40px;
+    }
+
+    .visible {
+      display: block;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+
+    th {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    .volver {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+    }
+
+    .volver:hover {
+      background-color: #2980b9;
+    }
+
+    @media print {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .sidebar,
+      .volver,
+      .sidebar button {
+        display: none !important;
+      }
+
+      .main {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+      }
+
+      .section {
+        display: none !important;
+      }
+
+      .section.visible {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>Reportes</h2>
+    <button onclick="mostrarSeccion('historial')">Historial Total</button>
+    <button onclick="mostrarSeccion('usuario')">Por Usuario</button>
+    <button onclick="mostrarSeccion('productos')">Más Vendidos</button>
+    <button onclick="mostrarSeccion('dia')">Por Día</button>
+    <button onclick="mostrarSeccion('semana')">Por Semana</button>
+    <button onclick="mostrarSeccion('mes')">Por Mes</button>
+    <button onclick="imprimir()">Imprimir PDF</button>
+    <a class="volver" href="/menu">Volver al Menú</a>
+  </div>
+
+  <div class="main">
+    <h1>Reportes de Ventas</h1>
+
+    <!-- Historial total -->
+    <div class="section" id="historial">
+      <h2>Historial Total de Ventas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID Venta</th>
+            <th>Fecha</th>
+            <th>Vendedor</th>
+            <th>Cliente</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>Precio (S/)</th>
+            <th>Subtotal (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% historialVentas.forEach(v => { %>
+            <tr>
+              <td><%= v.id_venta %></td>
+              <td><%= new Date(v.fecha).toLocaleString() %></td>
+              <td><%= v.vendedor %></td>
+              <td><%= v.cliente %></td>
+              <td><%= v.producto %></td>
+              <td><%= v.cantidad %></td>
+              <td><%= parseFloat(v.precio).toFixed(2) %></td>
+              <td><%= parseFloat(v.subtotal).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Ventas por usuario -->
+    <div class="section" id="usuario">
+      <h2>Ventas por Usuario</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Total de Ventas</th>
+            <th>Monto Total (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% ventasPorUsuario.forEach(u => { %>
+            <tr>
+              <td><%= u.usuario %></td>
+              <td><%= u.total_ventas %></td>
+              <td><%= parseFloat(u.total_monto).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Productos más vendidos -->
+    <div class="section" id="productos">
+      <h2>Productos Más Vendidos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad Vendida</th>
+            <th>Total Recaudado (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% productosMasVendidos.forEach(p => { %>
+            <tr>
+              <td><%= p.producto %></td>
+              <td><%= p.cantidad_total %></td>
+              <td><%= parseFloat(p.total_recaudado).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Ventas por día -->
+    <div class="section" id="dia">
+      <h2>Ventas por Día (Últimos 7 días)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Total (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% ventasPorDia.forEach(d => { %>
+            <tr>
+              <td><%= new Date(d.dia).toLocaleDateString() %></td>
+              <td><%= parseFloat(d.total).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Ventas por semana -->
+    <div class="section" id="semana">
+      <h2>Ventas por Semana (Últimas 4 semanas)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Año</th>
+            <th>Semana</th>
+            <th>Total (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% ventasPorSemana.forEach(s => { %>
+            <tr>
+              <td><%= s.anio %></td>
+              <td><%= s.semana %></td>
+              <td><%= parseFloat(s.total).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Ventas por mes -->
+    <div class="section" id="mes">
+      <h2>Ventas por Mes (Últimos 6 meses)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Año</th>
+            <th>Mes</th>
+            <th>Total (S/)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% ventasPorMes.forEach(m => { %>
+            <tr>
+              <td><%= m.anio %></td>
+              <td><%= m.mes %></td>
+              <td><%= parseFloat(m.total).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function mostrarSeccion(id) {
+      document.querySelectorAll('.section').forEach(sec => {
+        sec.classList.remove('visible');
+      });
+      document.getElementById(id).classList.add('visible');
+
+      document.querySelectorAll('.sidebar button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const btnAct = Array.from(document.querySelectorAll('.sidebar button')).find(btn => btn.textContent.toLowerCase().includes(id));
+      if (btnAct) btnAct.classList.add('active');
+    }
+
+    function imprimir() {
+      window.print();
+    }
+
+    // Mostrar por defecto
+    mostrarSeccion('historial');
+  </script>
+
+</body>
+</html>

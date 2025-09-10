@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestión de Clientes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      font-family: 'Roboto', sans-serif;
+      color: #2c3e50;
+      padding-bottom: 50px;
+    }
+
+    h1 {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      display: none;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .btn-primary {
+      background-color: #1abc9c;
+      border: none;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: #16a085;
+    }
+
+    .btn-ventas, .btn-menu {
+      background-color: #2c3e50;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+
+    .btn-ventas:hover, .btn-menu:hover {
+      background-color: #1a252f;
+    }
+
+    .btn-toggle-form {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+
+    .btn-toggle-form:hover {
+      background-color: #16a085;
+    }
+
+    .table-container {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      margin-top: 30px;
+    }
+
+    .thead-dark th {
+      background-color: #2980b9 !important;
+      color: white;
+      font-size: 16px;
+    }
+
+    .table td, .table th {
+      vertical-align: middle;
+      text-align: center;
+    }
+
+    #buscadorCliente {
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-5">
+  <h1 class="mb-4">Gestión de Clientes</h1>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <button class="btn-toggle-form" onclick="toggleFormulario()">➕ Agregar Cliente</button>
+    </div>
+    <div>
+      <button type="button" class="btn-ventas" onclick="window.location.href='/simple'">Ir a Ventas</button>
+      <button type="button" class="btn-menu" onclick="window.location.href='/menu'">Ir al Menú</button>
+    </div>
+  </div>
+
+  <!-- Formulario oculto -->
+  <form action="/clientes/agregar_cliente" method="POST" class="form-container" id="formularioCliente">
+    <div class="form-group">
+      <label for="nombre">Nombre:</label>
+      <input type="text" name="nombre" class="form-control" required>
+    </div>
+    <div class="form-group">
+      <label for="telefono">Teléfono:</label>
+      <input type="text" name="telefono" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="direccion">Dirección:</label>
+      <input type="text" name="direccion" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar Cliente</button>
+  </form>
+
+  <div class="form-group mt-3">
+    <input type="text" id="buscadorCliente" class="form-control" placeholder="Buscar cliente por nombre..." onkeyup="filtrarClientes()">
+  </div>
+
+  <div class="table-container">
+    <div class="table-responsive">
+      <table id="tablaClientes" class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>ID Cliente</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% clientes.forEach(cliente => { %>
+            <tr>
+              <td><%= cliente.id_cliente %></td>
+              <td class="nombre-cliente"><%= cliente.nombre %></td>
+              <td><%= cliente.telefono %></td>
+              <td><%= cliente.direccion %></td>
+              <td>
+                <a href="/clientes/editar_cliente/<%= cliente.id_cliente %>" class="btn btn-sm btn-warning">Editar</a>
+                <a href="/clientes/eliminar_cliente/<%= cliente.id_cliente %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este cliente?')">Eliminar</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filtrarClientes() {
+    const input = document.getElementById('buscadorCliente').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaClientes tbody tr');
+
+    filas.forEach(fila => {
+      const nombre = fila.querySelector('.nombre-cliente').textContent.toLowerCase();
+      fila.style.display = nombre.startsWith(input) ? '' : 'none';
+    });
+  }
+
+  function toggleFormulario() {
+    const form = document.getElementById('formularioCliente');
+    if (form.style.display === 'none' || form.style.display === '') {
+      form.style.display = 'block';
+      form.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      form.style.display = 'none';
+    }
+  }
+</script>
+
+</body>
+</html>

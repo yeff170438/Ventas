@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestión de Usuarios</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+  <style>
+    body {
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      font-family: 'Roboto', sans-serif;
+      color: #2c3e50;
+      padding-bottom: 50px;
+    }
+
+    h1, h2 {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .form-container {
+      background-color: #ffffff;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      display: none;
+      transition: all 0.5s ease-in-out;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .btn-primary {
+      background-color: #1abc9c;
+      border: none;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: #16a085;
+    }
+
+    .btn-warning {
+      background-color: #f39c12;
+      border: none;
+    }
+
+    .btn-warning:hover {
+      background-color: #e67e22;
+    }
+
+    .btn-danger {
+      background-color: #e74c3c;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    .btn-toggle-form {
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-weight: 500;
+    }
+
+    .btn-toggle-form:hover {
+      background-color: #16a085;
+    }
+
+    .table-container {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      margin-top: 30px;
+    }
+
+    .thead-dark th {
+      background-color: #2980b9 !important;
+      color: white;
+      font-size: 16px;
+    }
+
+    .table td, .table th {
+      vertical-align: middle;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container mt-5">
+    <h1 class="mb-4">Gestión de Usuarios</h1>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <button class="btn-toggle-form" onclick="toggleFormulario()">➕ Agregar Usuario</button>
+    </div>
+
+    <form action="/usuarios/agregar_usuario" method="POST" class="form-container" id="formularioUsuario">
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="direccion">Dirección:</label>
+        <input type="text" id="direccion" name="direccion" class="form-control" required />
+      </div>
+
+      <div class="form-group">
+        <label for="rol">Rol:</label>
+        <select id="rol" name="rol" class="form-control" required>
+          <option value="vendedor">Vendedor</option>
+          <option value="administrador">Administrador</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="contrasena">Contraseña:</label>
+        <input type="password" id="contrasena" name="contrasena" class="form-control" required />
+      </div>
+
+      <button type="submit" class="btn btn-primary">Guardar Usuario</button>
+    </form>
+
+    <h2 class="mt-5">Lista de Usuarios</h2>
+
+    <div class="table-container">
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="thead-dark">
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Dirección</th>
+              <th>Rol</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% usuarios.forEach(usuario => { %>
+              <tr>
+                <td><%= usuario.id_usuario %></td>
+                <td><%= usuario.nombre %></td>
+                <td><%= usuario.telefono %></td>
+                <td><%= usuario.direccion %></td>
+                <td><%= usuario.rol %></td>
+                <td>
+                  <a href="/usuarios/editar_usuario/<%= usuario.id_usuario %>" class="btn btn-sm btn-warning">Editar</a>
+                  <a href="/usuarios/eliminar_usuario/<%= usuario.id_usuario %>" class="btn btn-sm btn-danger" onclick="return confirm('¿Seguro que quieres eliminar este usuario?')">Eliminar</a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleFormulario() {
+      const form = document.getElementById('formularioUsuario');
+      form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+      if (form.style.display === 'block') {
+        form.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  </script>
+
+</body>
+</html>

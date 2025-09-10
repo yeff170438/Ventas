@@ -1,0 +1,16 @@
+<table>
+  <thead>
+    <tr>
+      <th>Día</th>
+      <th>Total Recaudado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% ventas.forEach(d => { %>
+      <tr>
+        <td><%= new Date(d.dia).toLocaleDateString() %></td>
+        <td><%= parseFloat(d.total).toFixed(2) %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
