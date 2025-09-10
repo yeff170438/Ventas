@@ -449,32 +449,70 @@
       <% } %>
     </section>
 
-    <!-- Producto más vendido -->
-    <section id="producto-section" class="report-section">
-      <% if (productosMasVendidos && productosMasVendidos.length > 0) { %>
-        <h2>Producto Más Vendido</h2>
-        <table>
-          <thead>
+  <!-- Producto más vendido -->
+  <section id="producto-section" class="report-section">
+    <% if (productosMasVendidos && productosMasVendidos.length > 0) { %>
+      <h2>Productos Más Vendidos</h2>
+      
+      <!-- Tabla existente -->
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad Total</th>
+            <th>Total Recaudado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% productosMasVendidos.forEach(p => { %>
             <tr>
-              <th>Producto</th>
-              <th>Cantidad Total</th>
-              <th>Total Recaudado</th>
+              <td><%= p.producto %></td>
+              <td><%= p.cantidad_total %></td>
+              <td><%= parseFloat(p.total_recaudado).toFixed(2) %></td>
             </tr>
-          </thead>
-          <tbody>
-            <% productosMasVendidos.forEach(p => { %>
-              <tr>
-                <td><%= p.producto %></td>
-                <td><%= p.cantidad_total %></td>
-                <td><%= parseFloat(p.total_recaudado).toFixed(2) %></td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      <% } else { %>
-        <p>No hay datos de productos más vendidos.</p>
-      <% } %>
-    </section>
+          <% }) %>
+        </tbody>
+      </table>
+
+      <!-- Gráfico con Chart.js -->
+      <canvas id="productosChart" width="400" height="200"></canvas>
+
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const ctx = document.getElementById('productosChart').getContext('2d');
+
+        const productos = <%- JSON.stringify(productosMasVendidos.map(p => p.producto)) %>;
+        const cantidades = <%- JSON.stringify(productosMasVendidos.map(p => p.cantidad_total)) %>;
+
+        new Chart(ctx, {
+          type: 'bar', // Puedes probar 'pie', 'doughnut', 'line'
+          data: {
+            labels: productos,
+            datasets: [{
+              label: 'Cantidad Vendida',
+              data: cantidades,
+              backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'top' },
+              title: { display: true, text: 'Productos Más Vendidos' }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+      </script>
+    <% } else { %>
+      <p>No hay datos de productos más vendidos.</p>
+    <% } %>
+  </section>
+
 
     <!-- Ventas últimos 7 días -->
     <section id="ultimos7-section" class="report-section">
